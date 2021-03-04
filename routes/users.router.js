@@ -3,6 +3,9 @@ const router = express.Router();
 
 const createError = require("http-errors");
 
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 const User = require("../models/user.model");
 
 // HELPER FUNCTIONS
@@ -30,19 +33,19 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
       return next(createError(400)); // Bad Request
     }
 
+    const name = { firstName, lastName };
+    const address = { street, city, postCode };
+
     const salt = await bcrypt.genSalt(saltRounds);
     const hashPass = await bcrypt.hash(password, salt);
 
     const newUser = await User.create({
       role,
-      firstName,
-      lastName,
+      name,
       email,
       password: hashPass,
       phone,
-      street,
-      city,
-      postCode,
+      address,
       profilePic,
     });
 
@@ -57,7 +60,7 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
 });
 
 // GET '/api/users'
-router.get("/",  async (req, res, next) => {
+router.get("/", isLoggedIn, async (req, res, next) => {
   try {
     const users = await User.find();
 
@@ -74,7 +77,7 @@ router.get("/",  async (req, res, next) => {
 });
 
 // GET '/api/users/:id'
-router.get("/:id", isLoggedIn, isAdmin, async (req, res, next) => {
+router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await User.findById(id);
@@ -102,15 +105,15 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
       profilePic,
     } = req.body;
 
+    const name = { firstName, lastName };
+    const address = { street, city, postCode };
+
     const user = await User.findByIdAndUpdate(
       id,
       {
-        firstName,
-        lastName,
+        name,
         phone,
-        street,
-        city,
-        postCode,
+        address,
         profilePic,
       },
       { new: true }
@@ -126,7 +129,7 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
 });
 
 // GET '/api/users/delete/:id'
-router.get("/:id", isLoggedIn, isAdmin, async (req, res, next) => {
+router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await User.findByIdAndDelete(id);
