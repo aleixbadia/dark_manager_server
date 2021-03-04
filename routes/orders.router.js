@@ -3,7 +3,6 @@ const router = express.Router();
 
 const createError = require("http-errors");
 
-
 const Brand = require("../models/brand.model");
 
 // HELPER FUNCTIONS
@@ -12,21 +11,10 @@ const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 // POST '/api/brands/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
-    const {
-     name
-    } = req.body;
-
-    // const user = await User.findOne({ email });                 // esto se hace en brands?
-
-    // if (user) {
-    //   return next(createError(400)); // Bad Request
-    // }
-
-    // const salt = await bcrypt.genSalt(saltRounds);
-    // const hashPass = await bcrypt.hash(password, salt);
+    const { name } = req.body;
 
     const newBrand = await Brand.create({
-     name
+      name,
     });
 
     res
@@ -68,22 +56,19 @@ router.get("/:id", isLoggedIn, async (req, res, next) => {
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const {
-      name
-    } = req.body;
+    const { name } = req.body;
 
-
-    const brand = await Brand.findByIdAndUpdate(     // sin client
+    const brand = await Brand.findByIdAndUpdate(
+      // sin client
       id,
       {
-       name
+        name,
       },
       { new: true }
     );
 
     if (!brand) return next(createError(404)); // Bad Request
 
-    
     res.status(200).json(brand);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)

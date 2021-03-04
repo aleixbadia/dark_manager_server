@@ -67,15 +67,15 @@ app.use("/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/recipes", recipesRouter);
-//app.use("/api/ingredients", ingredientsRouter);
+app.use("/api/ingredients", ingredientsRouter);
 app.use("/api/packagings", packagingsRouter);
-app.use("/api/brands", brandsRouter);
+// app.use("/api/brands", brandsRouter);
 
 // ERROR HANDLING
 // Catch 404 and respond with error message
 // Shows a 404 error with a message when no route is found for the request
 app.use((req, res, next) => {
-  res.status(404).json({ code: "not found" });
+  res.status(404).json({ code: "route not found" });
 });
 
 // Catch `next(err)` calls

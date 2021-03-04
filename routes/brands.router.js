@@ -3,18 +3,15 @@ const router = express.Router();
 
 const createError = require("http-errors");
 
-
 const Brand = require("../models/brand.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 
 // POST '/api/brands/create'
-router.post("/create", isLoggedIn, async (req, res, next) => {
+router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
-    const {
-     name
-    } = req.body;
+    const { name } = req.body;
 
     // const user = await User.findOne({ email });                 // esto se hace en brands?
 
@@ -26,7 +23,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     // const hashPass = await bcrypt.hash(password, salt);
 
     const newBrand = await Brand.create({
-      name
+      name,
     });
 
     res
@@ -38,7 +35,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 });
 
 // GET '/api/brands'
-router.get("/", isLoggedIn, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const brands = await Brand.find();
 
@@ -51,7 +48,7 @@ router.get("/", isLoggedIn, async (req, res, next) => {
 });
 
 // GET '/api/brands/:id'
-router.get("/:id", isLoggedIn, async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const brand = await Brand.findById(id);
@@ -65,25 +62,22 @@ router.get("/:id", isLoggedIn, async (req, res, next) => {
 });
 
 // POST '/api/brands/update/:id'
-router.post("/update/:id", isLoggedIn, async (req, res, next) => {
+router.post("/update/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const {
-     name
-    } = req.body;
+    const { name } = req.body;
 
-
-    const brand = await Brand.findByIdAndUpdate(     // sin client
+    const brand = await Brand.findByIdAndUpdate(
+      // sin client
       id,
       {
-     name
+        name,
       },
       { new: true }
     );
 
     if (!brand) return next(createError(404)); // Bad Request
 
-    
     res.status(200).json(brand);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
@@ -91,7 +85,7 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
 });
 
 // GET '/api/brands/delete/:id'
-router.get("/delete/:id", isLoggedIn, async (req, res, next) => {
+router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const brand = await Brand.findByIdAndDelete(id);

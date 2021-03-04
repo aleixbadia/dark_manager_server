@@ -8,10 +8,8 @@ const saltRounds = 10;
 
 const User = require("../models/user.model");
 
-// HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 
-// POST '/api/users/create'
 router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const {
@@ -30,7 +28,7 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      return next(createError(400)); // Bad Request
+      return next(createError(400));
     }
 
     const name = { firstName, lastName };
@@ -51,20 +49,17 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
 
     newUser.password = "*";
 
-    res
-      .status(201) // Created
-      .json(newUser);
+    res.status(201).json(newUser);
   } catch (error) {
-    next(createError(error)); // Internal Server Error (by default)
+    next(createError(error));
   }
 });
 
-// GET '/api/users'
 router.get("/", isLoggedIn, async (req, res, next) => {
   try {
     const users = await User.find();
 
-    if (!users) return next(createError(404)); // Bad Request
+    if (!users) return next(createError(404));
 
     users.forEach((user) => {
       user.password = "*";
@@ -72,26 +67,24 @@ router.get("/", isLoggedIn, async (req, res, next) => {
 
     res.status(200).json(users);
   } catch (error) {
-    next(createError(error)); // 500 Internal Server Error (by default)
+    next(createError(error));
   }
 });
 
-// GET '/api/users/:id'
 router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await User.findById(id);
 
-    if (!user) return next(createError(404)); // Bad Request
+    if (!user) return next(createError(404));
 
     user.password = "*";
     res.status(200).json(user);
   } catch (error) {
-    next(createError(error)); // 500 Internal Server Error (by default)
+    next(createError(error));
   }
 });
 
-// POST '/api/users/update/:id'
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -119,26 +112,25 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
       { new: true }
     );
 
-    if (!user) return next(createError(404)); // Bad Request
+    if (!user) return next(createError(404));
 
     user.password = "*";
     res.status(200).json(user);
   } catch (error) {
-    next(createError(error)); // 500 Internal Server Error (by default)
+    next(createError(error));
   }
 });
 
-// GET '/api/users/delete/:id'
 router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await User.findByIdAndDelete(id);
 
-    if (!user) return next(createError(404)); // Bad Request
+    if (!user) return next(createError(404));
 
     res.status(200).json(user);
   } catch (error) {
-    next(createError(error)); // 500 Internal Server Error (by default)
+    next(createError(error));
   }
 });
 
