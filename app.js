@@ -11,7 +11,7 @@ require("dotenv").config();
 
 const authRouter = require("./routes/auth.router");
 const usersRouter = require("./routes/users.router");
-const projectsRouter = require("./routes/projects.router");
+const ordersRouter = require("./routes/orders.router");
 
 // MONGOOSE CONNECTION
 mongoose
@@ -61,10 +61,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/auth", authRouter);
 
 app.use("/api/users", usersRouter);
-app.use("/api/projects", projectsRouter);
+// app.use("/api/orders", ordersRouter);
 
 // ERROR HANDLING
-//  Catch 404 and respond with error message
+// Catch 404 and respond with error message
 // Shows a 404 error with a message when no route is found for the request
 app.use((req, res, next) => {
   res.status(404).json({ code: "not found" });
