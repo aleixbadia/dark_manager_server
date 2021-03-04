@@ -43,7 +43,7 @@ mongoose
         address: {
           street: "Carrer Pamplona 96",
           city: "Barcelona",
-          postCode: "08123",
+          postCode: 08123,
         },
         currentCart: [],
 
@@ -55,12 +55,7 @@ mongoose
         //   formattedAddress: 'Carrer Pamplona',
         // },
       },
-      {
-        timestamps: {
-          createdAt: "created_at",
-          updatedAt: "updated_at",
-        },
-      },
+  
 
       {
         role: "employee",
@@ -74,7 +69,7 @@ mongoose
         address: {
           street: "Carrer Pamplona 69",
           city: "Barcelona",
-          postCode: "08123",
+          postCode: 08123,
         },
         currentCart: [],
         profilePic: "https://image.flaticon.com/icons/png/128/3135/3135715.png",
@@ -86,15 +81,10 @@ mongoose
         //   formattedAddress: 'Carrer Pamplona',
         // },
       },
-      {
-        timestamps: {
-          createdAt: "created_at",
-          updatedAt: "updated_at",
-        },
-      },
+   
     ];
 
-    // 3. CREATE THE USERS DOCUMENTS
+   // 3. CREATE THE USERS DOCUMENTS
     users.forEach((user) => {
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = bcrypt.hashSync(user.password, salt);
@@ -440,6 +430,7 @@ mongoose
     console.log("DB Creation Fully Ready");
     mongoose.connection.close();
   })
+  
   .catch((err) => console.log("Error connection to the DB", err));
 
 //node bin/seeds.js
