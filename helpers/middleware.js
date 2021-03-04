@@ -12,7 +12,7 @@ exports.isNotLoggedIn = (req, res, next) => {
   else next( createError(403) );   // new Error({message: '', statusCode: 403})
 };
 
-exports.validationLogin = (req, res, next) => {
+exports.validateAuthData = (req, res, next) => {
   const { username, password } = req.body;
 
   if (!username || !password){
@@ -21,11 +21,16 @@ exports.validationLogin = (req, res, next) => {
   else next();
 };
 
+exports.isAdmin = (req, res, next) => {
+  if (req.session.currentUser.role === "employee") next();
+  else next(createError(401));
+};
+
 
 
 // Above exporting is same as what we did before:
 // exports = {
 //   isLoggedIn,
 //   isNotLoggedIn,
-//   validationLogin,
+//   validateAuthData,
 // }
