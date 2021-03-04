@@ -4,91 +4,82 @@ const router = express.Router();
 const createError = require("http-errors");
 
 const User = require("../models/user.model");
+const Order = require("../models/order.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 
-// POST '/api/users/create'
-router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
+// POST '/api/orders/create'
+router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
-    const {
-      role,
-      firstName,
-      lastName,
-      email,
-      password,
-      phone,
-      street,
-      city,
-      postCode,
-      profilePic,
+  const {
+  value,
+  stage,
+  client,
+  orderPackaging,
+  recipes,
+  deliveredBy,
+  cookedBy,
     } = req.body;
 
-    const user = await User.findOne({ email });
+    // const user = await User.findOne({ email });                 // esto se hace en roders?
 
-    if (user) {
-      return next(createError(400)); // Bad Request
-    }
+    // if (user) {
+    //   return next(createError(400)); // Bad Request
+    // }
 
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashPass = await bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt(saltRounds);
+    // const hashPass = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({
-      role,
-      firstName,
-      lastName,
-      email,
-      password: hashPass,
-      phone,
-      street,
-      city,
-      postCode,
-      profilePic,
+    const newOrder = await Order.create({
+      value,
+      stage,
+      client,
+      orderPackaging,
+      recipes,
+      deliveredBy,
+      cookedBy,
     });
 
-    newUser.password = "*";
+  
 
     res
       .status(201) // Created
-      .json(newUser);
+      .json(newOrder);
   } catch (error) {
     next(createError(error)); // Internal Server Error (by default)
   }
 });
 
-// GET '/api/users'
-router.get("/", isLoggedIn, isAdmin, async (req, res, next) => {
+// GET '/api/orders'
+router.get("/", isLoggedIn, async (req, res, next) => {
   try {
-    const users = await User.find();
+    const orders = await Order.find();
 
-    if (!users) return next(createError(404)); // Bad Request
+    if (!orders) return next(createError(404)); // Bad Request
 
-    users.forEach((user) => {
-      user.password = "*";
-    });
-
-    res.status(200).json(users);
+   
+    res.status(200).json(orders);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/users/:id'
-router.get("/:id", isLoggedIn, isAdmin, async (req, res, next) => {
+// GET '/api/orders/:id'
+router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const user = await User.findById(id);
+    const order = await Order.findById(id);
 
-    if (!user) return next(createError(404)); // Bad Request
+    if (!order) return next(createError(404)); // Bad Request
 
-    user.password = "*";
-    res.status(200).json(user);
+    res.status(200).json(order);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// POST '/api/users/update/:id'
+// POST '/api/ordrs/update/:id'
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -102,7 +93,7 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
       profilePic,
     } = req.body;
 
-    const user = await User.findByIdAndUpdate(
+    const user = await Order.findByIdAndUpdate(
       id,
       {
         firstName,
@@ -116,20 +107,20 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
       { new: true }
     );
 
-    if (!user) return next(createError(404)); // Bad Request
+    if (!order) return next(createError(404)); // Bad Request
 
-    user.password = "*";
-    res.status(200).json(user);
+    
+    res.status(200).json(order);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
 // GET '/api/users/delete/:id'
-router.get("/:id", isLoggedIn, isAdmin, async (req, res, next) => {
+router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const user = await User.findByIdAndDelete(id);
+    const order = await Order.findByIdAndDelete(id);
 
     if (!user) return next(createError(404)); // Bad Request
 
