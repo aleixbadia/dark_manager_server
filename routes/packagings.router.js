@@ -3,20 +3,23 @@ const router = express.Router();
 
 const createError = require("http-errors");
 
-
-const Brand = require("../models/brand.model");
+const Packaging = require("../models/packaging.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 
-// POST '/api/brands/create'
+// POST '/api/packagings/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
     const {
-     name
+        name,
+        currentStock,
+        minimum,
+        price,
+              
     } = req.body;
 
-    // const user = await User.findOne({ email });                 // esto se hace en brands?
+    // const user = await User.findOne({ email });                 // esto se hace en packagings?
 
     // if (user) {
     //   return next(createError(400)); // Bad Request
@@ -25,80 +28,89 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     // const salt = await bcrypt.genSalt(saltRounds);
     // const hashPass = await bcrypt.hash(password, salt);
 
-    const newBrand = await Brand.create({
-     name
+    const newPackaging = await Packaging.create({
+        name,
+        currentStock,
+        minimum,
+        price,
     });
 
     res
       .status(201) // Created
-      .json(newBrand);
+      .json(newPackaging);
   } catch (error) {
     next(createError(error)); // Internal Server Error (by default)
   }
 });
 
-// GET '/api/brands'
+// GET '/api/packagings'
 router.get("/", isLoggedIn, async (req, res, next) => {
   try {
-    const brands = await Brand.find();
+    const packagings = await Packaging.find();
 
-    if (!brands) return next(createError(404)); // Bad Request
+    if (!packagings) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brands);
+    res.status(200).json(packagings);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/brands/:id'
+// GET '/api/packagings/:id'
 router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const brand = await Brand.findById(id);
+    const packaging = await Packaging.findById(id);
 
-    if (!brand) return next(createError(404)); // Bad Request
+    if (!packaging) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brand);
+    res.status(200).json(packaging);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// POST '/api/brands/update/:id'
+// POST '/api/packagings/update/:id'
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
     const {
-      name
+        name,
+        currentStock,
+        minimum,
+        price,
     } = req.body;
 
 
-    const brand = await Brand.findByIdAndUpdate(     // sin client
+    const packaging = await Packaging.findByIdAndUpdate(     // sin client
       id,
       {
-       name
+        name,
+        currentStock,
+        minimum,
+        price,
       },
       { new: true }
     );
 
-    if (!brand) return next(createError(404)); // Bad Request
+    if (!packaging) return next(createError(404)); // Bad Request
 
     
-    res.status(200).json(brand);
+    res.status(200).json(packaging);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/brands/delete/:id'
+// GET '/api/packagings/delete/:id'
 router.get("/delete/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const brand = await Brand.findByIdAndDelete(id);
+    const packaging = await Packaging.findByIdAndDelete(id);
 
-    if (!brand) return next(createError(404)); // Bad Request
+    if (!packaging) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brand);
+    res.status(200).json(packaging);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }

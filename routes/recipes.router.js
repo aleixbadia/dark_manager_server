@@ -8,7 +8,7 @@ const Recipe = require("../models/recipe.model");
 // HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 
-// POST '/api/orders/create'
+// POST '/api/recipes/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
     const {
@@ -63,11 +63,11 @@ router.get("/", isLoggedIn, async (req, res, next) => {
 router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const order = await Order.findById(id);
+    const recipe = await Recipe.findById(id);
 
-    if (!order) return next(createError(404)); // Bad Request
+    if (!recipe) return next(createError(404)); // Bad Request
 
-    res.status(200).json(order);
+    res.status(200).json(recipe);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
