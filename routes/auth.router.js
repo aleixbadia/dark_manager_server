@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const createError = require("http-errors");
-const bcrypt = require("bcrypt");
 
+const bcrypt = require("bcrypt");
 const saltRounds = 10;
+
 const User = require("../models/user.model");
 
 // HELPER FUNCTIONS
@@ -21,7 +22,6 @@ router.post(
   async (req, res, next) => {
     try {
       const {
-        role,
         firstName,
         lastName,
         email,
@@ -39,19 +39,19 @@ router.post(
         return next(createError(400)); // Bad Request
       }
 
+      const name = { firstName, lastName };
+      const address = { street, city, postCode };
+
       const salt = await bcrypt.genSalt(saltRounds);
       const hashPass = await bcrypt.hash(password, salt);
 
       const newUser = await User.create({
-        role,
-        firstName,
-        lastName,
+        role: "client",
+        name,
         email,
         password: hashPass,
         phone,
-        street,
-        city,
-        postCode,
+        address,
         profilePic,
       });
 
@@ -77,7 +77,9 @@ router.post(
     try {
       const { email, password } = req.body;
 
+      console.log("hola");
       const user = await User.findOne({ email });
+      
       if (!user) return next(createError(404)); // Bad Request
 
       const passwordCorrect = await bcrypt.compare(password, user.password);
