@@ -3,8 +3,7 @@ const router = express.Router();
 
 const createError = require("http-errors");
 
-const User = require("../models/user.model");
-const Order = require("../models/order.model");
+const Recipe = require("../models/recipe.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
@@ -13,16 +12,15 @@ const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
     const {
-      value,
-      stage,
-      client,
-      orderPackaging,
-      recipes,
-      deliveredBy,
-      cookedBy,
+      name,
+      brandId,
+      price,
+      ingredients,
+      recipePackaging,
+      picture,
     } = req.body;
 
-    // const user = await User.findOne({ email });                 // esto se hace en orders?
+    // const user = await User.findOne({ email });                 // esto se hace en roders?
 
     // if (user) {
     //   return next(createError(400)); // Bad Request
@@ -31,38 +29,37 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     // const salt = await bcrypt.genSalt(saltRounds);
     // const hashPass = await bcrypt.hash(password, salt);
 
-    const newOrder = await Order.create({
-      value,
-      stage,
-      client,
-      orderPackaging,
-      recipes,
-      deliveredBy,
-      cookedBy,
+    const newRecipe = await Recipe.create({
+      name,
+      brandId,
+      price,
+      ingredients,
+      recipePackaging,
+      picture,
     });
 
     res
       .status(201) // Created
-      .json(newOrder);
+      .json(newRecipe);
   } catch (error) {
     next(createError(error)); // Internal Server Error (by default)
   }
 });
 
-// GET '/api/orders'
+// GET '/api/recipes'
 router.get("/", isLoggedIn, async (req, res, next) => {
   try {
-    const orders = await Order.find();
+    const recipes = await Recipe.find();
 
-    if (!orders) return next(createError(404)); // Bad Request
+    if (!recipes) return next(createError(404)); // Bad Request
 
-    res.status(200).json(orders);
+    res.status(200).json(recipes);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/orders/:id'
+// GET '/api/recipes/:id'
 router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -76,52 +73,50 @@ router.get("/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// POST '/api/orders/update/:id'
+// POST '/api/recipes/update/:id'
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
     const {
-      value,
-      stage,
-      client,
-      orderPackaging,
-      recipes,
-      deliveredBy,
-      cookedBy,
+      name,
+      brandId,
+      price,
+      ingredients,
+      recipePackaging,
+      picture,
     } = req.body;
 
-
-    const order = await Order.findByIdAndUpdate(     // sin client
+    const recipe = await Recipe.findByIdAndUpdate(
+      // sin client
       id,
       {
-        value,
-        stage,
-        orderPackaging,      
-        recipes,
-        deliveredBy,
-        cookedBy,
+        name,
+        brandId,
+        price,
+        ingredients,
+        recipePackaging,
+        picture,
       },
       { new: true }
     );
 
-    if (!order) return next(createError(404)); // Bad Request
+    if (!recipe) return next(createError(404)); // Bad Request
 
-    
-    res.status(200).json(order);
+    res.status(200).json(recipe);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/orders/delete/:id'
+// GET '/api/recipes/delete/:id'
 router.get("/delete/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const order = await Order.findByIdAndDelete(id);
+    const recipe = await Recipe.findByIdAndDelete(id);
 
-    if (!order) return next(createError(404)); // Bad Request
+    if (!recipe) return next(createError(404)); // Bad Request
 
-    res.status(200).json(order);
+    res.status(200).json(recipe);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
