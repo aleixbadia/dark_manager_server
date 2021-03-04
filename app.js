@@ -75,7 +75,7 @@ app.use("/api/ingredients", ingredientsRouter);
 // Catch 404 and respond with error message
 // Shows a 404 error with a message when no route is found for the request
 app.use((req, res, next) => {
-  res.status(404).json({ code: "not found" });
+  res.status(404).json({ code: "route not found" });
 });
 
 // Catch `next(err)` calls
