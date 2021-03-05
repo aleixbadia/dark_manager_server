@@ -55,7 +55,7 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
   }
 });
 
-router.get("/", isLoggedIn, async (req, res, next) => {
+router.get("/", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const users = await User.find();
 

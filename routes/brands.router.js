@@ -11,10 +11,11 @@ const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 // POST '/api/brands/create'
 router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, nameUrl } = req.body;
 
     const newBrand = await Brand.create({
       name,
+      nameUrl,
     });
 
     res
@@ -56,13 +57,14 @@ router.get("/:id", async (req, res, next) => {
 router.post("/update/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { name } = req.body;
+    const { name, nameUrl } = req.body;
 
     const brand = await Brand.findByIdAndUpdate(
       // sin client
       id,
       {
         name,
+        nameUrl,
       },
       { new: true }
     );
@@ -80,6 +82,19 @@ router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const brand = await Brand.findByIdAndDelete(id);
+
+    if (!brand) return next(createError(404)); // Bad Request
+
+    res.status(200).json(brand);
+  } catch (error) {
+    next(createError(error)); // 500 Internal Server Error (by default)
+  }
+});
+// GET '/api/brands/:nameUrl'
+router.get("/name/:nameUrl", async (req, res, next) => {
+  try {
+    const nameUrl = req.params.nameUrl;
+    const brand = await Brand.findOne({"nameUrl": nameUrl})
 
     if (!brand) return next(createError(404)); // Bad Request
 

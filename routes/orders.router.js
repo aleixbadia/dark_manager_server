@@ -11,10 +11,22 @@ const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 // POST '/api/orders/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const {   value,
+      stage,  
+      client,
+      orderPackaging,
+      recipes,
+      deliveredBy,
+      cookedBy, } = req.body;
 
     const newOrder = await Order.create({
-      name,
+  value,
+  stage,  
+  client,
+  orderPackaging,
+  recipes,
+  deliveredBy,
+  cookedBy,
     });
 
     res
@@ -56,13 +68,25 @@ router.get("/:id", isLoggedIn, async (req, res, next) => {
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { name } = req.body;
+    const {   value,
+      stage,  
+      client,
+      orderPackaging,
+      recipes,
+      deliveredBy,
+      cookedBy, } = req.body;
 
     const order = await Order.findByIdAndUpdate(
       // sin client
       id,
       {
-        name,
+        value,
+        stage,  
+        client,
+        orderPackaging,
+        recipes,
+        deliveredBy,
+        cookedBy,
       },
       { new: true }
     );
