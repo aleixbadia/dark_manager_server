@@ -69,7 +69,7 @@ app.use("/api/orders", ordersRouter);
 app.use("/api/recipes", recipesRouter);
 app.use("/api/ingredients", ingredientsRouter);
 app.use("/api/packagings", packagingsRouter);
-// app.use("/api/brands", brandsRouter);
+app.use("/api/brands", brandsRouter);
 
 // ERROR HANDLING
 // Catch 404 and respond with error message

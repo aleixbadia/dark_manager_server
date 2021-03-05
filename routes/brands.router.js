@@ -13,15 +13,6 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const { name } = req.body;
 
-    // const user = await User.findOne({ email });                 // esto se hace en brands?
-
-    // if (user) {
-    //   return next(createError(400)); // Bad Request
-    // }
-
-    // const salt = await bcrypt.genSalt(saltRounds);
-    // const hashPass = await bcrypt.hash(password, salt);
-
     const newBrand = await Brand.create({
       name,
     });

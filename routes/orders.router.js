@@ -3,62 +3,62 @@ const router = express.Router();
 
 const createError = require("http-errors");
 
-const Brand = require("../models/brand.model");
+const Order = require("../models/order.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn, isAdmin } = require("../helpers/middleware");
 
-// POST '/api/brands/create'
+// POST '/api/orders/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
     const { name } = req.body;
 
-    const newBrand = await Brand.create({
+    const newOrder = await Order.create({
       name,
     });
 
     res
       .status(201) // Created
-      .json(newBrand);
+      .json(newOrder);
   } catch (error) {
     next(createError(error)); // Internal Server Error (by default)
   }
 });
 
-// GET '/api/brands'
+// GET '/api/orders'
 router.get("/", isLoggedIn, async (req, res, next) => {
   try {
-    const brands = await Brand.find();
+    const orders = await Order.find();
 
-    if (!brands) return next(createError(404)); // Bad Request
+    if (!orders) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brands);
+    res.status(200).json(orders);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/brands/:id'
+// GET '/api/orders/:id'
 router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const brand = await Brand.findById(id);
+    const order = await Order.findById(id);
 
-    if (!brand) return next(createError(404)); // Bad Request
+    if (!order) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brand);
+    res.status(200).json(order);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// POST '/api/brands/update/:id'
+// POST '/api/orders/update/:id'
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
     const { name } = req.body;
 
-    const brand = await Brand.findByIdAndUpdate(
+    const order = await Order.findByIdAndUpdate(
       // sin client
       id,
       {
@@ -67,23 +67,23 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
       { new: true }
     );
 
-    if (!brand) return next(createError(404)); // Bad Request
+    if (!order) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brand);
+    res.status(200).json(order);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
 });
 
-// GET '/api/brands/delete/:id'
+// GET '/api/orders/delete/:id'
 router.get("/delete/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const brand = await Brand.findByIdAndDelete(id);
+    const order = await Order.findByIdAndDelete(id);
 
-    if (!brand) return next(createError(404)); // Bad Request
+    if (!order) return next(createError(404)); // Bad Request
 
-    res.status(200).json(brand);
+    res.status(200).json(order);
   } catch (error) {
     next(createError(error)); // 500 Internal Server Error (by default)
   }
