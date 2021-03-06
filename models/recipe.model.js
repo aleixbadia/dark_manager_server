@@ -10,7 +10,7 @@ const recipeSchema = new Schema({
   recipePackaging: [{ type: ObjectId, ref: "Packaging" }],
   picture: {
     type: String,
-    default: "./../public/images/default-recipe.png",
+    default: "https://findicons.com/files/icons/2502/food_icons/256/2.png",
   },
 });
 

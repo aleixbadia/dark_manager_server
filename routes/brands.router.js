@@ -16,6 +16,7 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
     const newBrand = await Brand.create({
       name,
       nameUrl,
+      brandPic,
     });
 
     res
@@ -57,7 +58,7 @@ router.get("/:id", async (req, res, next) => {
 router.post("/update/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { name, nameUrl } = req.body;
+    const { name, nameUrl, brandPic } = req.body;
 
     const brand = await Brand.findByIdAndUpdate(
       // sin client
@@ -65,6 +66,7 @@ router.post("/update/:id", isLoggedIn, isAdmin, async (req, res, next) => {
       {
         name,
         nameUrl,
+        brandPic,
       },
       { new: true }
     );

@@ -134,4 +134,39 @@ router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   }
 });
 
+/// añadir al carro 
+router.post("/add", isLoggedIn, async (req, res, next) => {
+  try {
+    const id =req.session.currentUser._id;
+    const { quantity, recipeId  } = req.body;
+    
+
+    const user = await User.findByIdAndUpdate(
+      id ,
+      { $push: { currentCart: { quantity, recipeId } }}, {new: true}
+    );
+    res.status(200).json(user)
+    //res.redirect("/cart");
+  } catch (error) {
+    next(createError(error));
+  }
+});
+
+// borrar del carro
+router.get("/delete", async (req, res, next) => {
+  try {
+    const id = req.session.currentUser._id;
+    const { quantity, recipeId } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $pull: { currentCart: { quantity, recipeId } } },{new: true}
+    );
+
+    res.status(200).json(user)
+  } catch (error) {
+    next(createError(error));
+  }
+});
+
 module.exports = router;

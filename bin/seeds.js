@@ -307,15 +307,18 @@ mongoose
     const brands = [
       {
         name: "Mandele",
-        nameUrl: "mandele"
+        nameUrl: "mandele",   
+        brandPic: "https://i.pinimg.com/originals/77/02/19/7702196ab95a607e21f5a685fb8188a1.png"     
       },
       {
         name: "Pizza Garden",
-        nameUrl: "pizza_garden"
+        nameUrl: "pizza_garden",
+        brandPic: "https://static.wixstatic.com/media/614fa5_c6e0a53f299047cf9de35188e9c30190~mv2.png/v1/fill/w_183,h_49,al_c,q_85,usm_4.00_1.00_0.00/logo_garden_web.webp"
       },
       {
         name: "Burger Hostel",
-        nameUrl: "burger_hostel"
+        nameUrl: "burger_hostel",
+        brandPic: "https://burgerhostel.com/wp-content/uploads/2020/10/cropped-IMG_0073-2048x867.png"
       },
     ];
 
