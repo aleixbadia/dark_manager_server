@@ -96,13 +96,13 @@ router.post("/update/:id", isLoggedIn, isAdmin,  async (req, res, next) => {
   }
 });
 
-// GET '/api/recipes/delete/:id'
+
 router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const recipe = await Recipe.findByIdAndDelete(id);
 
-    if (!recipe) return next(createError(404)); // Bad Request
+    if (!recipe) return next(createError(404)); 
 
     res.status(200).json(recipe);
   } catch (error) {
@@ -110,4 +110,21 @@ router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   }
 });
 
+
+//get recipes by brandId
+router.get("/brandId/:brandId", isLoggedIn, async (req, res, next) => {
+  try {
+    const brandId = req.params.brandId;
+    const recipe = await Recipe.find({"brandId": brandId}).populate('ingredients')
+
+    if (!recipe) return next(createError(404)); 
+
+    res.status(200).json(recipe);
+  } catch (error) {
+    next(createError(error)); 
+  }
+});
+
+
 module.exports = router;
+

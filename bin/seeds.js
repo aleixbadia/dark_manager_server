@@ -307,12 +307,15 @@ mongoose
     const brands = [
       {
         name: "Mandele",
+        nameUrl: "mandele"
       },
       {
         name: "Pizza Garden",
+        nameUrl: "pizza_garden"
       },
       {
         name: "Burger Hostel",
+        nameUrl: "burger_hostel"
       },
     ];
 
