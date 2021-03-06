@@ -98,4 +98,5 @@ router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
   }
 });
 
+
 module.exports = router;
