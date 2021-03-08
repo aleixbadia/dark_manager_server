@@ -21,15 +21,12 @@ const userSchema = new Schema(
       city: { type: String, required: true },
       postCode: { type: Number, required: true },
     },
-    currentCart: {
-      type: [
-        {
-          recipeId: { type: ObjectId, ref: "Recipe" },
-          quantity: Number,
-        },
-      ],
-      default: [],
-    },
+    currentCart: [
+      {
+        recipeId: { type: ObjectId, ref: "Recipe" },
+        quantity: Number,
+      },
+    ],
 
     profilePic: {
       type: String,
