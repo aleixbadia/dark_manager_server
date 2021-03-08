@@ -4,29 +4,31 @@ const router = express.Router();
 const createError = require("http-errors");
 
 const Order = require("../models/order.model");
+const Recipe = require("../models/recipe.model");
 
 // HELPER FUNCTIONS
-const { isLoggedIn, isAdmin } = require("../helpers/middleware");
+const { isLoggedIn } = require("../helpers/middleware");
 
 // POST '/api/orders/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
-    const {   value,
-      stage,  
-      client,
-      orderPackaging,
-      recipes,
-      deliveredBy,
-      cookedBy, } = req.body;
+    const { client, cart, orderPackaging } = req.body;
+
+    const allRecipes = await Recipe.find();
+    let totalPrice = 0;
+    cart.forEach((cartObj) => {
+      allRecipes.forEach((recipe) => {
+        if (cartObj.recipeId === recipe._id) {
+          totalPrice += recipe.price;
+        }
+      });
+    });
 
     const newOrder = await Order.create({
-  value,
-  stage,  
-  client,
-  orderPackaging,
-  recipes,
-  deliveredBy,
-  cookedBy,
+      client,
+      cart,
+      orderPackaging,
+      totalPrice,
     });
 
     res
@@ -68,23 +70,25 @@ router.get("/:id", isLoggedIn, async (req, res, next) => {
 router.post("/update/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
-    const {   value,
-      stage,  
+    const {
+      totalPrice,
+      stage,
       client,
       orderPackaging,
-      recipes,
+      cart,
       deliveredBy,
-      cookedBy, } = req.body;
+      cookedBy,
+    } = req.body;
 
     const order = await Order.findByIdAndUpdate(
       // sin client
       id,
       {
-        value,
-        stage,  
+        totalPrice,
+        stage,
         client,
         orderPackaging,
-        recipes,
+        cart,
         deliveredBy,
         cookedBy,
       },
