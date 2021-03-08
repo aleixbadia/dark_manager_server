@@ -12,7 +12,7 @@ const { isLoggedIn } = require("../helpers/middleware");
 // POST '/api/orders/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
-    const { client, cart, orderPackaging } = req.body;
+    const { clientId, cart } = req.body;
 
     const allRecipes = await Recipe.find();
     let totalPrice = 0;
@@ -25,9 +25,8 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     });
 
     const newOrder = await Order.create({
-      client,
+      clientId,
       cart,
-      orderPackaging,
       totalPrice,
     });
 
@@ -73,7 +72,7 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
     const {
       totalPrice,
       stage,
-      client,
+      clientId,
       orderPackaging,
       cart,
       deliveredBy,
@@ -81,12 +80,12 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
     } = req.body;
 
     const order = await Order.findByIdAndUpdate(
-      // sin client
+      // sin clientId
       id,
       {
         totalPrice,
         stage,
-        client,
+        clientId,
         orderPackaging,
         cart,
         deliveredBy,
