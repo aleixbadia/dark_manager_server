@@ -75,7 +75,7 @@ router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await User.findById(id).populate('currentCart.recipeId');
-
+   console.log('USER', user)
     if (!user) return next(createError(404));
 
     user.password = "*";
@@ -172,9 +172,9 @@ router.post("/deleteFromCart", isLoggedIn, async (req, res, next) => {
 
    //////////////////////////////////////////////////////////////
 
-router.get("/checkout", async (req, res, next) => {
+router.get("/checkout", isLoggedIn, async (req, res, next) => {
   try {
-    const logged = await checkLogin(req);
+    
     const userId = req.session.currentUser._id;
     let subtotal = 0;
 
@@ -182,35 +182,33 @@ router.get("/checkout", async (req, res, next) => {
     const user = await User.findById(userId).populate("currentCart.recipeId");
 
     user.currentCart.forEach(async (item) => {
-      subtotal +=
-        Math.round(
-          (item.quantity * item.designId.price + Number.EPSILON) * 100
-        ) / 100;
+      subtotal += currentCart.quantity * currentCart.recipeId.price 
 
       await User.findByIdAndUpdate(
-        item.designId.userId,
+        userId,
         { $inc: { com_points: 100 } },
         { new: true }
       );
     });
-    let finalShipping = shipping * user.currentCart.length;
-    let total = subtotal + finalShipping;
+
+
+    
+
 
     //CREATE THE ORDER WITH CART INFO
     await Order.create({
-      userId,
-      cart: user.currentCart,
-      subtotal,
-      shipping: finalShipping,
-      total,
+      client: userId,
+      cart:user.currentCart,
+      orderPackaging,
+      totalPrice: subtotal,
+     
     });
 
     //CLEAR USER CURRENT CART
     await User.findByIdAndUpdate(userId, { currentCart: [] }, { new: true });
 
-    //ADD COMPOINTS TO DESIGNER
 
-    res.render("shop/checkout", { logged });
+    res.status(200).json(user)
   } catch (error) {
     console.log(error);
   }
@@ -218,3 +216,6 @@ router.get("/checkout", async (req, res, next) => {
 
 
 module.exports = router;
+
+
+
