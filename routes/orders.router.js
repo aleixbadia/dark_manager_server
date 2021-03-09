@@ -5,6 +5,7 @@ const createError = require("http-errors");
 
 const Order = require("../models/order.model");
 const Recipe = require("../models/recipe.model");
+const User = require("../models/user.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn } = require("../helpers/middleware");
@@ -12,28 +13,38 @@ const { isLoggedIn } = require("../helpers/middleware");
 // POST '/api/orders/create'
 router.post("/create", isLoggedIn, async (req, res, next) => {
   try {
-    const { client, cart, orderPackaging } = req.body;
+    const { clientId, cart } = req.body;
 
     const allRecipes = await Recipe.find();
     let totalPrice = 0;
     cart.forEach((cartObj) => {
+      console.log('cartObj', cartObj)
       allRecipes.forEach((recipe) => {
-        if (cartObj.recipeId === recipe._id) {
-          totalPrice += recipe.price;
+        console.log("recipe._id", typeof recipe._id)
+        console.log("cartObj.recipeId._id ", typeof cartObj.recipeId._id )
+       
+        if (cartObj.recipeId._id === String(recipe._id)) {
+          console.log('recipe.price', recipe.price)
+          totalPrice += recipe.price*cartObj.quantity;
         }
       });
     });
 
     const newOrder = await Order.create({
-      client,
+      clientId,
       cart,
-      orderPackaging,
       totalPrice,
     });
 
     res
       .status(201) // Created
       .json(newOrder);
+
+    //CLEAR USER CURRENT CART
+    const userId = req.session.currentUser._id;
+    await User.findByIdAndUpdate(userId, { currentCart: [] }, { new: true });
+
+    res.status(200).json(user);
   } catch (error) {
     next(createError(error)); // Internal Server Error (by default)
   }
@@ -73,7 +84,7 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
     const {
       totalPrice,
       stage,
-      client,
+      clientId,
       orderPackaging,
       cart,
       deliveredBy,
@@ -81,12 +92,12 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
     } = req.body;
 
     const order = await Order.findByIdAndUpdate(
-      // sin client
+      // sin clientId
       id,
       {
         totalPrice,
         stage,
-        client,
+        clientId,
         orderPackaging,
         cart,
         deliveredBy,
@@ -118,3 +129,18 @@ router.get("/delete/:id", isLoggedIn, async (req, res, next) => {
 });
 
 module.exports = router;
+
+// meter esto en create ordre
+
+router.get("/checkout", isLoggedIn, async (req, res, next) => {
+  try {
+    const userId = req.session.currentUser._id;
+
+    //CLEAR USER CURRENT CART
+    await User.findByIdAndUpdate(userId, { currentCart: [] }, { new: true });
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+  }
+});

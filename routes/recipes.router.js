@@ -37,7 +37,7 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
   }
 });
 
-router.get("/", isLoggedIn, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const recipes = await Recipe.find();
 
@@ -49,7 +49,7 @@ router.get("/", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/:id", isLoggedIn, async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const recipe = await Recipe.findById(id);
@@ -112,7 +112,7 @@ router.get("/delete/:id", isLoggedIn, isAdmin, async (req, res, next) => {
 
 
 //get recipes by brandId
-router.get("/brandId/:brandId", isLoggedIn, async (req, res, next) => {
+router.get("/brandId/:brandId",  async (req, res, next) => {
   try {
     const brandId = req.params.brandId;
     const recipe = await Recipe.find({"brandId": brandId}).populate('ingredients')

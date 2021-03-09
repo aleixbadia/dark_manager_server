@@ -3,16 +3,10 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 const orderSchema = new Schema({
-  client: { type: ObjectId, ref: "User" },
+  clientId: { type: ObjectId, ref: "User" },
   cart: [
     {
       recipeId: { type: ObjectId, ref: "Recipe" },
-      quantity: Number,
-    },
-  ],
-  orderPackaging: [
-    {
-      packagingId: { type: ObjectId, ref: "Recipe" },
       quantity: Number,
     },
   ],
