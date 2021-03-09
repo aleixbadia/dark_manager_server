@@ -188,48 +188,45 @@ router.post("/deleteFromCart", isLoggedIn, async (req, res, next) => {
 
 //////////////////////////////////////////////////////////////
 
-router.get("/checkout", async (req, res, next) => {
-  try {
-    const logged = await checkLogin(req);
-    const userId = req.session.currentUser._id;
-    let subtotal = 0;
+// router.get("/checkout", isLoggedIn, async (req, res, next) => {
+//   try {
+    
+//     const userId = req.session.currentUser._id;
+//     let subtotal = 0;
 
-    //TAKE CURRENT CART INFO
-    const user = await User.findById(userId).populate("currentCart.recipeId");
+//     //TAKE CURRENT CART INFO
+//     const user = await User.findById(userId).populate("currentCart.recipeId");
 
-    user.currentCart.forEach(async (item) => {
-      subtotal +=
-        Math.round(
-          (item.quantity * item.designId.price + Number.EPSILON) * 100
-        ) / 100;
+//     user.currentCart.forEach(async (item) => {
+//       subtotal += currentCart.quantity * currentCart.recipeId.price 
 
-      await User.findByIdAndUpdate(
-        item.designId.userId,
-        { $inc: { com_points: 100 } },
-        { new: true }
-      );
-    });
-    let finalShipping = shipping * user.currentCart.length;
-    let total = subtotal + finalShipping;
+//       await User.findByIdAndUpdate(
+//         userId,
+//         { $inc: { com_points: 100 } },
+//         { new: true }
+//       );
+//     });
 
-    //CREATE THE ORDER WITH CART INFO
-    await Order.create({
-      userId,
-      cart: user.currentCart,
-      subtotal,
-      shipping: finalShipping,
-      total,
-    });
+//     //CREATE THE ORDER WITH CART INFO
+//     await Order.create({
+//       client: userId,
+//       cart:user.currentCart,
+//       orderPackaging,
+//       totalPrice: subtotal,
+     
+//     });
 
-    //CLEAR USER CURRENT CART
-    await User.findByIdAndUpdate(userId, { currentCart: [] }, { new: true });
+//     //CLEAR USER CURRENT CART
+//     await User.findByIdAndUpdate(userId, { currentCart: [] }, { new: true });
 
-    //ADD COMPOINTS TO DESIGNER
 
-    res.render("shop/checkout", { logged });
-  } catch (error) {
-    console.log(error);
-  }
-});
+//     res.status(200).json(user)
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 module.exports = router;
+
+
+
