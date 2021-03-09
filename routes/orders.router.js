@@ -51,6 +51,19 @@ router.get("/", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// GET '/api/orders/populated'
+router.get("/populated", isLoggedIn, async (req, res, next) => {
+  try {
+    const orders = await Order.find().populate("clientId").populate('cart.recipeId');
+
+    if (!orders) return next(createError(404)); // Bad Request
+
+    res.status(200).json(orders);
+  } catch (error) {
+    next(createError(error)); // 500 Internal Server Error (by default)
+  }
+});
+
 // GET '/api/orders/:id'
 router.get("/:id", isLoggedIn, async (req, res, next) => {
   try {
