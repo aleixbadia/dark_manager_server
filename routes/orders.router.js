@@ -18,14 +18,14 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     const allRecipes = await Recipe.find();
     let totalPrice = 0;
     cart.forEach((cartObj) => {
-      console.log('cartObj', cartObj)
+      console.log("cartObj", cartObj);
       allRecipes.forEach((recipe) => {
-        console.log("recipe._id", typeof recipe._id)
-        console.log("cartObj.recipeId._id ", typeof cartObj.recipeId._id )
-       
+        console.log("recipe._id", typeof recipe._id);
+        console.log("cartObj.recipeId._id ", typeof cartObj.recipeId._id);
+
         if (cartObj.recipeId._id === String(recipe._id)) {
-          console.log('recipe.price', recipe.price)
-          totalPrice += recipe.price*cartObj.quantity;
+          console.log("recipe.price", recipe.price);
+          totalPrice += recipe.price * cartObj.quantity;
         }
       });
     });
@@ -66,7 +66,9 @@ router.get("/", isLoggedIn, async (req, res, next) => {
 // GET '/api/orders/populated'
 router.get("/populated", isLoggedIn, async (req, res, next) => {
   try {
-    const orders = await Order.find().populate("clientId").populate('cart.recipeId');
+    const orders = await Order.find()
+      .populate("clientId")
+      .populate("cart.recipeId");
 
     if (!orders) return next(createError(404)); // Bad Request
 
@@ -119,6 +121,39 @@ router.post("/update/:id", isLoggedIn, async (req, res, next) => {
       { new: true }
     );
 
+    if (!order) return next(createError(404)); // Bad Request
+
+    res.status(200).json(order);
+  } catch (error) {
+    next(createError(error)); // 500 Internal Server Error (by default)
+  }
+});
+
+// POST '/api/orders/update-stage/:id'
+router.post("/update-stage/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { stage, userId } = req.body;
+    let order;
+    if (stage === "Cooking" || stage === "New") {
+      order = await Order.findByIdAndUpdate(
+        id,
+        { stage, cookedBy: null, deliveredBy: null },
+        { new: true }
+      );
+    } else if (stage === "Delivery") {
+      order = await Order.findByIdAndUpdate(
+        id,
+        { stage, cookedBy: userId, deliveredBy: null },
+        { new: true }
+      );
+    } else if (stage === "Done") {
+      order = await Order.findByIdAndUpdate(
+        id,
+        { stage, deliveredBy: userId },
+        { new: true }
+      );
+    }
     if (!order) return next(createError(404)); // Bad Request
 
     res.status(200).json(order);
