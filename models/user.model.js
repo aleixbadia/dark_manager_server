@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
-//const geocoder = require("../utils/geocoder");
+const geocoder = require('geocoder');
 
 const userSchema = new Schema(
   {
@@ -25,24 +25,23 @@ const userSchema = new Schema(
       {
         recipeId: { type: ObjectId, ref: "Recipe" },
         quantity: Number,
-      }
+      },
     ],
 
     profilePic: {
       type: String,
       default: "https://image.flaticon.com/icons/png/128/3135/3135715.png",
     },
-    // location: {
-    //   type: {
-    //     type: String,
-    //     enum: ["point"],
-    //   },
-    //   // coordinates: {
-    //   //   type: [Number],
-    //   //   index: "2dsphere",
-    //   // },
-    //   formattedAddress: { type: String, required: true },
-    // },
+    location: {
+      type: {
+        type: String,
+        enum: ["point"],
+      },
+      coordinates: {
+        type: [Number],
+        index: "2dsphere",
+      },
+    },
   },
   {
     timestamps: {
@@ -51,18 +50,24 @@ const userSchema = new Schema(
     },
   }
 );
-// //. Geocode and create location
-// //.pre --> it happens before it is saved in the database
-// userSchema.pre("save", async function (next) {
-//   const location = await geocoder.geocode(this.address);
-//   //format as a Point
-//   this.location = {
-//     type: "Point",
-//     coordinates: [location[0].longitude, location[0].latitude],
-//     formattedAddress: location[0].formattedAddress,
-//   };
-//   next();
-// });
+//. Geocode and create location
+//.pre --> it happens before it is saved in the database
+userSchema.pre("save", async function (next) {
+  let address = `${this.address.street} ${this.address.city} ${this.address.postCode}`;
+  console.log(address);
+  
+  const location = await geocoder.geocode({ address: address });
+
+  console.log(location);
+  
+  //format as a Point
+  this.location = {
+    type: "Point",
+    coordinates: [location[0].longitude, location[0].latitude],
+    formattedAddress: location[0].formattedAddress,
+  };
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
