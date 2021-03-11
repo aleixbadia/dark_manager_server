@@ -8,7 +8,7 @@ const recipeSchema = new Schema({
   price: { type: Number, required: true },
   ingredients: [
     {
-      ingridientId: { type: ObjectId, ref: "Recipe" },
+      ingredientId: { type: ObjectId, ref: "Recipe" },
       quantity: Number,
     },
   ],
