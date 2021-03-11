@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
-const geocoder = require('geocoder');
+const geocoder = require("../utils/geocoder");
 
 const userSchema = new Schema(
   {
@@ -32,16 +32,7 @@ const userSchema = new Schema(
       type: String,
       default: "https://image.flaticon.com/icons/png/128/3135/3135715.png",
     },
-    location: {
-      type: {
-        type: String,
-        enum: ["point"],
-      },
-      coordinates: {
-        type: [Number],
-        index: "2dsphere",
-      },
-    },
+    location: [],
   },
   {
     timestamps: {
@@ -55,17 +46,13 @@ const userSchema = new Schema(
 userSchema.pre("save", async function (next) {
   let address = `${this.address.street} ${this.address.city} ${this.address.postCode}`;
   console.log(address);
-  
-  const location = await geocoder.geocode({ address: address });
+
+  const location = await geocoder.geocode(address);
 
   console.log(location);
-  
-  //format as a Point
-  this.location = {
-    type: "Point",
-    coordinates: [location[0].longitude, location[0].latitude],
-    formattedAddress: location[0].formattedAddress,
-  };
+
+  this.location = [location[0].longitude, location[0].latitude],
+
   next();
 });
 

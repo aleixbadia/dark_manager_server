@@ -1,14 +1,14 @@
-// require("dotenv").config();
-// const NodeGeocoder = require("node-geocoder");
+require("dotenv").config();
+const NodeGeocoder = require("node-geocoder");
 
-// const options = {
-//   provider: process.env.GEOCODER_PROVIDER,
-//   httpAdapter: "https",
-//   //fetch: customFetchImplementation,
-//   apiKey: process.env.GEOCODER_API_KEY, // for Mapquest
-//   formatter: null, // 'gpx', 'string', ...
-// };
+const options = {
+  provider: 'mapquest',
+  httpAdapter: "https",
+  //fetch: customFetchImplementation,
+  apiKey: "Be1L3m9SFAo4fYCgC3hEpFcxnJWcp6Bd", // for Mapquest
+  formatter: null, // 'gpx', 'string', ...
+};
 
-// const geocoder = NodeGeocoder(options);
+const geocoder = NodeGeocoder(options);
 
-// module.exports = geocoder;
+module.exports = geocoder;
