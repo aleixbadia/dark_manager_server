@@ -6,6 +6,7 @@ const createError = require("http-errors");
 const Order = require("../models/order.model");
 const Recipe = require("../models/recipe.model");
 const User = require("../models/user.model");
+const Ingredient = require("../models/ingredient.model");
 
 // HELPER FUNCTIONS
 const { isLoggedIn } = require("../helpers/middleware");
@@ -17,16 +18,22 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 
     const allRecipes = await Recipe.find();
     let totalPrice = 0;
-    cart.forEach((cartObj) => {
-      console.log("cartObj", cartObj);
+    console.log(cart[0].recipeId);
+    cart.forEach(async (cartObj) => {
       allRecipes.forEach((recipe) => {
-        console.log("recipe._id", typeof recipe._id);
-        console.log("cartObj.recipeId._id ", typeof cartObj.recipeId._id);
-
         if (cartObj.recipeId._id === String(recipe._id)) {
-          console.log("recipe.price", recipe.price);
           totalPrice += recipe.price * cartObj.quantity;
         }
+      });
+
+      console.log("cartObj", cartObj.recipeId.ingredients);
+      cartObj.recipeId.ingredients.forEach(async (ingredientObj) => {
+        console.log("ingredientObj------------", ingredientObj.ingredientId);
+        await Ingredient.findByIdAndUpdate(
+          ingredientObj.ingredientId,
+          { $inc: { currentStock: -ingredientObj.quantity*cartObj.quantity } },
+          { new: true }
+        );
       });
     });
 

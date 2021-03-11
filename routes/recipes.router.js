@@ -19,7 +19,7 @@ router.post("/create", isLoggedIn, isAdmin, async (req, res, next) => {
       recipePackaging,
       picture,
     } = req.body;
-
+console.log('ingredients', ingredients)
     const newRecipe = await Recipe.create({
       name,
       brandId,
